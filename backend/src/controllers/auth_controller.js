@@ -1,6 +1,7 @@
 import Usuarios from "../models/Usuarios.js"
 import { sendMailToRecoveryPassword } from "../helpers/sendMail.js"
 import { crearTokenJWT } from "../middlewares/JWT.js"
+import mongoose from "mongoose"
 
 //Endpoint para recuperar contraseña
 const recuperarPassword = async(req,res) => {
@@ -163,10 +164,55 @@ const perfil = (req,res) => {
   res.status(200).json(datosPerfil)
 }
 
+//Creación de endpoint para actualizar el perfil 
+const actualizarPerfil = async(req,res) => {
+  try {
+    const {id} = req.params
+    const {nombres, apellidos, provincia, username, email} = req.body
+    if ( !mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({msg: `ID inválido: ${id}`})
+    const usuarioBDD = await Usuarios.findById(id)
+    if (!usuarioBDD) return res.status(404).json({msg: `No existe el usuario con el ID ${id}`})
+    if (Object.values(req.body).includes("")) return res.status(400).json({msg: "Debes completar todos los campos."})
+    if (usuarioBDD.email !== email)
+    {
+      const emailExistente = await Usuarios.findOne({email})
+      if (emailExistente) {
+        return res.status(404).json({msg: "El email ya se encuentra registrado."})
+      }
+    }
+    usuarioBDD.nombres = nombres ?? usuarioBDD.nombres
+    usuarioBDD.apellidos = apellidos ?? usuarioBDD.apellidos
+    usuarioBDD.provincia = provincia ?? usuarioBDD.provincia
+    usuarioBDD.username = username ?? usuarioBDD.username
+    usuarioBDD.email = email ?? usuarioBDD.email
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({msg: `Error en el servidor - ${error}`})
+  }
+}
+
+//Creación de endpoint para actualizar la contraseña
+const actualizarPassword = async(req,res) => {
+  try {
+    const usuarioBDD = await Usuarios.findById(req.usuarioHeader._id)
+    if (!usuarioBDD) return res.status(404).json({msg: `Lo sentimos, no existe el usuario con el ID: ${id}`})
+    const verificarPassword = await usuarioBDD.matchPassword(req.body.passwordActual)
+    if (!verificarPassword) return res.status(404).json({msg: "Lo sentimos, la contraseña actual no es correcta."})
+    usuarioBDD.password = await usuarioBDD.encryptPassword(req.body.passwordNuevo)
+    await usuarioBDD.save()
+  
+  res.status(200).json({msg: "Contraseña actualizada con éxito."})
+  } catch (error) {
+    res.status(500).json({msg: `Error en el servidor - ${error}`})
+  }
+}
+
 export {
     recuperarPassword,
     comprobarTokenPassword,
     crearNuevoPassword,
     login,
-    perfil
+    perfil,
+    actualizarPerfil,
+    actualizarPassword
 }
