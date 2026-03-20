@@ -1,116 +1,143 @@
 import { useState } from 'react';
-import {MdVisibility, MdVisibilityOff} from "react-icons/md"
+import { MdVisibility, MdVisibilityOff, MdAutoStories, MdEmail, MdLockOpen, MdArrowBack } from "react-icons/md";
 import { Link, useNavigate } from 'react-router';
-import {useFetch} from '../hooks/useFetch'
+import { useFetch } from '../hooks/useFetch';
 import { ToastContainer } from 'react-toastify';
-import {useForm} from 'react-hook-form'
+import { useForm } from 'react-hook-form';
 
 const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
-    const navigate = useNavigate()
-    const {register, handleSubmit, formState: {errors}} = useForm()
-    const fetchDataBackend = useFetch()
+    const navigate = useNavigate();
+    const { register, handleSubmit, formState: { errors } } = useForm();
+    const fetchDataBackend = useFetch();
 
-    const loginUser = async(dataForm) => {
-        const url = `${import.meta.env.VITE_BACKEND_URL}/auth/login`
-        const response = await fetchDataBackend(url, dataForm, 'POST')
+    const loginUser = async (dataForm) => {
+        const url = `${import.meta.env.VITE_BACKEND_URL}/auth/login`;
+        const response = await fetchDataBackend(url, dataForm, 'POST');
         if (response) {
-            navigate('/dashboard')
+            navigate('/dashboard');
         }
-    }
+    };
+
+    const inputStyle = "block w-full pl-10 rounded-lg border border-gray-200 bg-white py-3 text-sm text-gray-700 focus:border-[#e67e22] focus:ring-1 focus:ring-[#e67e22] focus:outline-none transition-all duration-200 shadow-sm";
+    const labelStyle = "mb-1.5 block text-xs font-bold uppercase text-[#2c3e50] tracking-widest";
+    const errorStyle = "text-xs text-red-500 mt-1 font-semibold italic";
 
     return (
-        <div className="flex flex-col sm:flex-row h-screen">
+        <div className="flex h-screen bg-white font-sans overflow-hidden text-[#2c3e50]">
             <ToastContainer />
 
-            {/* Imagen de fondo */}
-            <div className="w-full sm:w-1/2 h-1/3 sm:h-screen bg-[url('/public/images/doglogin.jpg')] 
-            bg-no-repeat bg-cover bg-center sm:block hidden">
+            {/* LADO IZQUIERDO: IMAGEN LITERARIA */}
+            <div className="hidden lg:block lg:w-1/2 relative">
+                <div className="absolute inset-0 bg-[#2c3e50]/70 mix-blend-multiply z-10"></div>
+                <img 
+                    src="/images/librosfondo.jpeg" 
+                    alt="Biblioteca" 
+                    className="h-full w-full object-cover"
+                />
+                <div className="absolute inset-0 flex flex-col justify-center p-16 z-20 text-white">
+                    <span className="bg-[#e67e22] w-20 h-1 mb-6"></span>
+                    <h2 className="text-5xl font-black leading-tight uppercase tracking-tighter">
+                        Tu Próximo <br /> Capítulo <br /> Comienza Aquí
+                    </h2>
+                </div>
             </div>
 
-            {/* Contenedor de formulario */}
-            <div className="w-full sm:w-1/2 h-screen bg-white flex justify-center items-center">
-                <div className="md:w-4/5 sm:w-full">
-                    <h1 className="text-3xl font-semibold mb-2 text-center uppercase text-gray-500">Bienvenido(a) de nuevo</h1>
-                    <small className="text-gray-400 block my-4 text-sm">Por favor ingresa tus datos</small>
-                    
-                    {/*Formulario*/}
-                    <form onSubmit = {handleSubmit(loginUser)}>
-                        {/* Campo correo electrónico o nombre de usuario*/}
-                        <div className="mb-3">
-                            <label className="mb-2 block text-sm font-semibold">Correo electrónico</label>
-                            <input type="email" 
-                                placeholder="Ingresa tu correo o nombre de usuario..." 
-                                className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-2 text-gray-500" 
-                                {...register("identifier", {required: "El campo debe ser llenado de forma obligatoria"})}
-                                />
-                                {errors.identifier && <p className = "text-red-800">{errors.identifier.message}</p>}
-                        </div>
+            {/* FORMULARIO */}
+            <div className="w-full lg:w-1/2 flex flex-col relative bg-white overflow-y-auto">
+                
+                <div className="absolute top-6 left-8 z-30">
+                    <Link to="/" className="flex items-center text-sm font-bold text-gray-400 hover:text-[#2c3e50] transition-all group">
+                        <MdArrowBack className="mr-2 group-hover:-translate-x-1 transition-transform" size={20}/> 
+                        Regresar
+                    </Link>
+                </div>
 
-                        {/* Contraseña */}
-                        <div className="mb-3 relative">
-                            <label className="mb-2 block text-sm font-semibold">Contraseña</label>
-                            <div className="relative">
-                                <input
-                                    type={showPassword ? "text" : "password"}
-                                    placeholder="********************"
-                                    className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500 pr-10"
-                                    {...register("password", {required: "La contraseña es obligatoria."})}
-                                />
-                                    {errors.password && <p className = "text-red-800">{errors.password.message}</p>}
-
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute top-2 right-3 text-gray-500 hover:text-gray-700"
-                                >
-                                    {showPassword ? (
-                                        <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A9.956 9.956 0 0112 19c-4.418 0-8.165-2.928-9.53-7a10.005 10.005 0 0119.06 0 9.956 9.956 0 01-1.845 3.35M9.9 14.32a3 3 0 114.2-4.2m.5 3.5l3.8 3.8m-3.8-3.8L5.5 5.5" />
-                                        </svg>
-                                    ) : (
-                                        <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0zm-9.95 0a9.96 9.96 0 0119.9 0m-19.9 0a9.96 9.96 0 0119.9 0M3 3l18 18" />
-                                        </svg>
-                                    )}
-                                </button>
+                <div className="flex-1 flex flex-col justify-center items-center px-8 sm:px-16 py-12">
+                    <div className="w-full max-w-md">
+                        
+                        {/* Header Identidad */}
+                        <header className="text-center mb-8 mt-4">
+                            <div className="flex justify-center mb-3 text-[#e67e22]">
+                                <MdAutoStories size={45} />
                             </div>
+                            <h1 className="text-3xl font-black uppercase tracking-tighter">
+                                Bienvenido<span className="text-[#e67e22]">(a)</span>
+                            </h1>
+                            <p className="text-gray-400 mt-1 font-medium italic text-sm">
+                                Accede a la comunidad de Círculo Literario EC
+                            </p>
+                        </header>
+
+                        <form onSubmit={handleSubmit(loginUser)} className="space-y-5">
+                            <div>
+                                <label className={labelStyle}>Correo o Usuario</label>
+                                <div className="relative">
+                                    <MdEmail className="absolute left-3 top-3.5 text-gray-400" />
+                                    <input 
+                                        type="text" 
+                                        placeholder="ejemplo@correo.com" 
+                                        className={inputStyle}
+                                        {...register("identifier", { required: "El usuario es obligatorio" })}
+                                    />
+                                </div>
+                                {errors.identifier && <p className={errorStyle}>{errors.identifier.message}</p>}
+                            </div>
+
+                            <div>
+                                <label className={labelStyle}>Contraseña</label>
+                                <div className="relative">
+                                    <MdLockOpen className="absolute left-3 top-3.5 text-gray-400" />
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        placeholder="************"
+                                        className={inputStyle}
+                                        {...register("password", { required: "La contraseña es obligatoria" })}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-[#e67e22]"
+                                    >
+                                        {showPassword ? <MdVisibilityOff size={20} /> : <MdVisibility size={20} />}
+                                    </button>
+                                </div>
+                                {errors.password && <p className={errorStyle}>{errors.password.message}</p>}
+                                <div className="flex justify-end mt-2">
+                                    <Link to="/forgot/id" className="text-xs font-bold text-gray-400 hover:text-[#e67e22] transition-colors">
+                                        ¿Olvidaste tu contraseña?
+                                    </Link>
+                                </div>
+                            </div>
+
+                            <button className="w-full bg-[#e67e22] text-white font-black py-4 rounded-xl shadow-lg shadow-orange-100 hover:bg-[#d35400] hover:-translate-y-1 transition-all duration-300 uppercase tracking-widest text-sm">
+                                Iniciar Sesión
+                            </button>
+                        </form>
+
+                        <div className="mt-6 grid grid-cols-3 items-center text-gray-400">
+                            <hr className="border-gray-200" />
+                            <span className="text-center text-[10px] font-bold uppercase tracking-[0.2em]">O inicia sesión con</span>
+                            <hr className="border-gray-200" />
                         </div>
 
-                        {/* Botón de iniciar sesión */}
-                        <button className="py-2 w-full block text-center bg-gray-500 text-slate-300 border rounded-xl 
-                        hover:scale-100 duration-300 hover:bg-gray-900 hover:text-white">Iniciar sesión
+                        <button className="bg-white border border-gray-200 py-3 w-full rounded-xl mt-5 flex justify-center items-center text-sm font-bold text-[#2c3e50] hover:bg-gray-50 transition-all shadow-sm">
+                            <img className="w-5 mr-3" src="https://cdn-icons-png.flaticon.com/512/281/281764.png" alt="Google" />
+                            Google
                         </button>
 
-                    </form>
-
-                    {/* Separador con opción de "O" */}
-                    <div className="mt-6 grid grid-cols-3 items-center text-gray-400">
-                        <hr className="border-gray-400" />
-                        <span className="text-center text-sm">O</span>
-                        <hr className="border-gray-400" />
-                    </div>
-
-                    {/* Botón de inicio de sesión con Google */}
-                    <button className="bg-white border py-2 w-full rounded-xl mt-5 flex justify-center items-center text-sm hover:scale-105 duration-300 hover:bg-black hover:text-white">
-                        <img className="w-5 mr-2" src="https://cdn-icons-png.flaticon.com/512/281/281764.png" alt="Google icon" />
-                    </button>
-                        Iniciar sesión con Google
-
-                    {/* Olvidaste tu contraseña */}
-                    <div className="mt-5 text-xs border-b-2 py-4">
-                        <Link to="/forgot/id" className="underline text-sm text-gray-400 hover:text-gray-900">¿Olvidaste tu contraseña?</Link>
-                    </div>
-
-                    {/* Enlaces para volver o registrarse */}
-                    <div className="mt-3 text-sm flex justify-between items-center">
-                        <Link to="/" className="underline text-sm text-gray-400 hover:text-gray-900">Regresar</Link>
-                        <Link to="/register" className="py-2 px-5 bg-gray-600 text-slate-300 border rounded-xl hover:scale-110 duration-300 hover:bg-gray-900 hover:text-white">Registrarse</Link>
+                        {/* SECCIÓN DE REGISTRO */}
+                        <div className="mt-10 p-5 bg-orange-50 rounded-2xl border border-orange-100 text-center">
+                            <p className="text-sm text-gray-600 font-medium mb-2">¿Aún no eres parte del club?</p>
+                            <Link to="/register" className="text-[#e67e22] font-black uppercase tracking-widest text-sm hover:text-[#d35400] transition-colors inline-block border-b-2 border-[#e67e22]">
+                                Regístrate Gratis Aquí
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     );
-}
+};
 
 export default Login;

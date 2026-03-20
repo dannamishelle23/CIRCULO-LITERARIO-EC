@@ -21,9 +21,7 @@ export const Forgot = () => {
 
                 <div className="md:w-4/5 sm:w-full">
 
-                    <h1 className="text-3xl font-semibold mb-2 text-center uppercase  text-gray-500">!Olvidaste tu contraseña¡</h1>
-                    <small className="text-gray-400 block my-4 text-sm">No te preocupes</small>
-
+                    <h1 className="text-3xl font-semibold mb-2 text-center uppercase  text-gray-500">Olvidaste tu contraseña?</h1>
                     {/* Formulario */}
                     <form onSubmit = {handleSubmit(sendMail)}>
                         {/* Campo: Correo electrónico o nombre de usuario */}
@@ -37,7 +35,8 @@ export const Forgot = () => {
 
                         {/* Botón forgot password */}
                         <div className="mb-3">
-                            <button className="bg-gray-600 text-slate-300 border py-2 w-full rounded-xl mt-5 hover:scale-105 duration-300 hover:bg-gray-900 hover:text-white">Enviar correo 
+                            <button className="bg-gray-600 text-slate-300 border py-2 w-full rounded-xl mt-5 hover:scale-105 duration-300 hover:bg-gray-900 hover:text-white">
+                                Enviar
                             </button>
                         </div>
 
@@ -48,7 +47,7 @@ export const Forgot = () => {
 
                     {/* Enlace para iniciar sesión */}
                     <div className="mt-3 text-sm flex justify-between items-center">
-                        <p>¿Ya posees una cuenta?</p>
+                        <p>¿Ya tienes una cuenta?</p>
                         <Link to="/login" className="py-2 px-5 bg-gray-600 text-slate-300 border rounded-xl hover:scale-110 duration-300 hover:bg-gray-900 hover:text-white">Iniciar sesión</Link>
                     </div>
 
