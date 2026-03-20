@@ -16,6 +16,10 @@ const UsuarioSchema = new Schema({
         type: String,
         trim: true
     },
+    fechaNacimiento: {
+        type: Date,
+        required: true
+    },
     provincia: {
         type: String,
         required: true,

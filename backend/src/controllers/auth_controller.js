@@ -1,5 +1,6 @@
 import Usuarios from "../models/Usuarios.js"
 import { sendMailToRecoveryPassword } from "../helpers/sendMail.js"
+import { crearTokenJWT } from "../middlewares/JWT.js"
 
 //Endpoint para recuperar contraseña
 const recuperarPassword = async(req,res) => {
@@ -133,11 +134,13 @@ const login = async (req, res) => {
     }
 
     const { nombres, apellidos, provincia, username, _id, rol, email } = usuarioBDD
+    const token = crearTokenJWT(usuarioBDD._id, usuarioBDD.rol)
 
     return res.status(200).json({
       msg: "Inicio de sesión exitoso.",
       usuario: {
         _id,
+        token,
         nombres,
         apellidos,
         provincia,
@@ -153,9 +156,17 @@ const login = async (req, res) => {
   }
 }
 
+//Creación de endpoint para visualizar su perfil
+const perfil = (req,res) => {
+  //Quitar las variables del objeto que se envía al frontend
+  const {token, confirmEmail, createdAt, updatedAt, __v, ...datosPerfil} = req.usuarioHeader
+  res.status(200).json(datosPerfil)
+}
+
 export {
     recuperarPassword,
     comprobarTokenPassword,
     crearNuevoPassword,
-    login
+    login,
+    perfil
 }

@@ -1,12 +1,24 @@
 import { useState } from "react";
+import { MdVisibility, MdVisibilityOff} from "react-icons/md"
 import { Link } from "react-router";
-
+import {useForm} from "react-hook-form";
+import {ToastContainer} from 'react-toastify'
+import {useFetch} from "../hooks/useFetch"
 
 export const Register = () => {
     const [showPassword, setShowPassword] = useState(false);
+    const fetchDataBackend = useFetch()
+    const {register, handleSubmit, formState: {errors}} = useForm()
 
+    const registerUser = async(dataForm) => {
+      const url = `${import.meta.env.VITE_BACKEND_URL}/usuarios`
+      await fetchDataBackend(url, dataForm, "POST") 
+    }
+    
     return (
         <div className="flex flex-col sm:flex-row h-screen">
+
+            <ToastContainer/>
 
             {/* Sección de formulario de registro */}
             <div className="w-full sm:w-1/2 h-screen bg-white flex justify-center items-center">
@@ -17,27 +29,48 @@ export const Register = () => {
                     <h1 className="text-3xl font-semibold mb-2 text-center uppercase text-gray-500">Bienvenido(a)</h1>
                     <small className="text-gray-400 block my-4 text-sm">Por favor ingresa tus datos</small> 
                     
-                    <form>
+                    <form onSubmit = {handleSubmit(registerUser)}>
 
                         {/* Campo para nombre */}
                         <div className="mb-3">
-                            <label className="mb-2 block text-sm font-semibold">Nombre</label>
-                            <input type="text" placeholder="Ingresa tu nombre" className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500" />
+                            <label className="mb-2 block text-sm font-semibold">Nombres</label>
+                            <input type="text" placeholder="Ingresa tu nombre" 
+                                className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500" 
+                                {...register("nombres", {required: "El nombre es obligatorio."})}
+                                />
+                                {errors.nombres && <p className="text-red-800">{errors.nombres.message}</p>}
                         </div>
 
                         {/* Campo para apellido */}
                         <div className="mb-3">
-                            <label className="mb-2 block text-sm font-semibold">Apellido</label>
-                            <input type="text" placeholder="Ingresa tu apellido" className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500" />
+                            <label className="mb-2 block text-sm font-semibold">Apellidos</label>
+                            <input type="text" placeholder="Ingresa tu apellido" 
+                                className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500" 
+                                {...register("apellidos", {required: "Los apellidos son obligatorios."})}
+                                />
+                                {errors.apellidos && <p className="text-red-800">{errors.apellidos.message}</p>}
                         </div>
 
-                        {/* Campo para dirección */}
+                        {/* Campo para fecha de nacimiento */}
                         <div className="mb-3">
-                            <label className="mb-2 block text-sm font-semibold">Dirección</label>
-                            <input type="text" placeholder="Ingresa tu dirección de domicilio" className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500" />
+                            <label className="mb-2 block text-sm font-semibold">
+                                Fecha de nacimiento
+                            </label>
+
+                            <input
+                                type="date"
+                                className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
+                                {...register("fechaNacimiento", {
+                                    required: "La fecha de nacimiento es obligatoria"
+                                })}
+                            />
+
+                            {errors.fechaNacimiento && (
+                                <p className="text-red-800">{errors.fechaNacimiento.message}</p>
+                            )}
                         </div>
                         
-                        {/* Campo para celular */}
+                        {/* Campo para provincia */}
                         <div className="mb-3">
                             <label className="mb-2 block text-sm font-semibold">Celular</label>
                             <input type="number" placeholder="Ingresa tu celular" className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500" />
